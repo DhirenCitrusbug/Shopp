@@ -49,6 +49,11 @@
                                     <li><a href="tel:0123456789"><i class="fa fa-phone"></i> +012 3456 789</a></li>
                                     <li><a href="mailto:demo@example.com"><i class="fa fa-envelope-o"></i> demo@example.com</a></li>
                                     <li><a href="my-account.html"><i class="fa fa-user"></i> Account</a></li>
+                                    {% if user.is_authenticated %}
+                                    <li><a href="{% url 'logout' %}"><i class="fa fa-lock"></i> Logout</a></li>
+                                    {% else %}
+                                    <li><a href="{% url 'login' %}"><i class="fa fa-unlock"></i> Login</a></li>
+                                    {% endif %}
                                 </ul>
                             </div>
                         </div>
@@ -83,7 +88,7 @@
                                 <!-- Single Wedge End -->
                                 <a href="#offcanvas-cart" class="header-action-btn header-action-btn-cart offcanvas-toggle pr-0">
                                     <i class="pe-7s-shopbag"></i>
-                                    <span class="header-action-num">01</span>
+                                    <span class="header-action-num"> {{request.session.cart|length}}</span>
                                     <!-- <span class="cart-amount">€30.00</span> -->
                                 </a>
                                 <a href="#offcanvas-mobile-menu" class="header-action-btn header-action-btn-menu offcanvas-toggle d-lg-none">
@@ -121,7 +126,7 @@
                                 <!-- Single Wedge End -->
                                 <a href="#offcanvas-cart" class="header-action-btn header-action-btn-cart offcanvas-toggle pr-0">
                                     <i class="pe-7s-shopbag"></i>
-                                    <span class="header-action-num">01</span>
+                                    <span class="header-action-num"> {{request.session.cart|length}}</span>
                                     <!-- <span class="cart-amount">€30.00</span> -->
                                 </a>
                                 <a href="#offcanvas-mobile-menu" class="header-action-btn header-action-btn-menu offcanvas-toggle d-lg-none">
@@ -255,7 +260,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li><a href="contact.html">Contact</a></li>
+                                <li><a href="{% url 'contact' %}">Contact</a></li>
                             </ul>
                         </div>
                     </div>
@@ -322,7 +327,7 @@
                                         <div class="footer-row">
                                             <ul class="align-items-center">
                                                 <li class="li"><a class="single-link" href="my-account.html">My Account</a></li>
-                                                <li class="li"><a class="single-link" href="contact.html">Contact</a></li>
+                                                <li class="li"><a class="single-link" href="{% url 'contact' %}">Contact</a></li>
                                                 <li class="li"><a class="single-link" href="cart.html">Shopping cart</a></li>
                                                 <li class="li"><a class="single-link" href="shop-left-sidebar.html">Shop</a></li>
                                                 <li class="li"><a class="single-link" href="login.html">Services Login</a></li>
@@ -340,7 +345,7 @@
                                         <div class="footer-row">
                                             <ul class="align-items-center">
                                                 <li class="li"><a class="single-link" href="my-account.html">My Account</a></li>
-                                                <li class="li"><a class="single-link" href="contact.html">Contact</a></li>
+                                                <li class="li"><a class="single-link" href="{% url 'contact' %}">Contact</a></li>
                                                 <li class="li"><a class="single-link" href="cart.html">Shopping cart</a></li>
                                                 <li class="li"><a class="single-link" href="shop-left-sidebar.html">Shop</a></li>
                                                 <li class="li"><a class="single-link" href="login.html">Services Login</a></li>
@@ -400,7 +405,7 @@
                             <!-- Swiper -->
                             <div class="swiper-container gallery-top">
                                 <div class="swiper-wrapper">
-                                    {% for image in product.images.all %}
+                                    {% for image in product.image.all %}
                                     <div class="swiper-slide">
                                         <img class="img-responsive m-auto" src="{{image.image.url}}" alt="">
                                     </div>
@@ -421,7 +426,7 @@
                             </div>
                             <div class="swiper-container gallery-thumbs mt-20px slider-nav-style-1 small-nav">
                                 <div class="swiper-wrapper">
-                                    {% for image in product.images.all %}
+                                    {% for image in product.image.all %}
 
                                     <div class="swiper-slide">
                                         <img class="img-responsive m-auto" src="{{image.image.url}}" alt="">
@@ -449,10 +454,10 @@
                         </div>
                         <div class="col-lg-6 col-sm-12 col-xs-12" data-aos="fade-up" data-aos-delay="200">
                             <div class="product-details-content quickview-content">
-                                <h2>{{product.name}}</h2>
+                                <h4>{{product.name}}</h4>
                                 <div class="pricing-meta">
                                     <ul class="d-flex">
-                                        <li class="new-price">₹ {{product.price}}</li>
+                                        <li class="new-price"><h4>₹ {{product.price}}</h4></li> 
                                     </ul>
                                 </div>
                                 <div class="pro-details-rating-wrap">
@@ -465,7 +470,7 @@
                                     </div>
                                     <span class="read-review"><a class="reviews" href="#">( 2 Review )</a></span>
                                 </div>
-                                <p class="mt-30px">{{product.description|truncatewords:25}}</p>
+                                <p class="mt-30px">{{product.description|truncatewords:25 | safe}}</p>
                                 <div class="pro-details-categories-info pro-details-same-style d-flex m-0">
                                     <span>SKU:</span>
                                     <ul class="d-flex">
@@ -521,7 +526,8 @@
     {% endfor %}
     <!-- Modal end -->
     <!-- Modal Cart -->
-    <div class="modal customize-class fade" id="exampleModal-Cart" tabindex="-1"   aria-hidden="true">
+    {% for product in products %}
+    <div class="modal customize-class fade" id="exampleModal-Cart-{{product.pk}}" tabindex="-1"   aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body text-center">
@@ -531,14 +537,16 @@
                     </div>
                     <div class="tt-modal-product">
                         <div class="tt-img">
-                            <img src="{% static 'images/product-image/1.webp' %}" alt="Modern Smart Phone">
+                            <img src="{{product.image.all.first.image.url}}" alt="Modern Smart Phone">
                         </div>
-                        <h2 class="tt-title"><a href="#">Modern Smart Phone</a></h2>
+                        <h2 class="tt-title"><a href="#">{{product.name|truncatewords:4}}</a></h2>
+                        <a href="{% url 'cart_add' product.id %}">Add To Cart</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>     
+    {% endfor %}
     <!-- Modal wishlist -->
     <div class="modal customize-class fade" id="exampleModal-Wishlist" tabindex="-1"   aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">

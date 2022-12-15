@@ -246,14 +246,14 @@
             </div>
         </div>
         <!-- breadcrumb-area end -->
-        <!-- Shop Page Start  -->
+        <!-- Shop Page Start  --> 
         <div class="shop-category-area pt-100px pb-100px">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
                         <!-- Shop Top Area Start -->
                         <div class="shop-top-bar d-flex">
-                            <p class="compare-product"> <span>12</span> Product Found of <span>30</span></p>
+                            <p class="badges"> Search Result{% if products.count > 1%}s{% endif %} For "{{search}}" : {{products.count}}</p>
                             <!-- Left Side End -->
                             <div class="shop-tab nav">
                                 <button class="active" data-bs-target="#shop-grid" data-bs-toggle="tab">
@@ -327,11 +327,21 @@
                                             </div>
                                 </div>
                             </div>
+
                             {% endfor %}
-                    
+
                                                 
                                             </div>
                                         </div>
+                                        {% if not products  %}
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <h3 style="text-align:center; color:#6c6c6c;">Not Found
+                                        <br>
+                                        <br>
+                                    </h3>
+                                        {% endif %}
                                         <div class="tab-pane fade mb-n-30px" id="shop-list">
                                             <div class="shop-list-wrapper mb-30px">
                                                 <div class="row">

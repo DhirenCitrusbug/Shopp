@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
+from ckeditor.fields import RichTextField
+from django.contrib.auth.models import User
 # Create your models here.
 
 class Category(models.Model):
@@ -67,10 +69,11 @@ class Product(models.Model):
 
     # unique_id = models.CharField(max_length=100, unique=True, null=False,blank=True)
     name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True,null=True,blank=True,max_length=200)
     price = models.IntegerField()
     condition = models.CharField(max_length=100, choices=CONDITION)
-    information = models.TextField()
-    description = models.TextField()
+    information = RichTextField()
+    description = RichTextField()
     stock = models.CharField(max_length=100, choices=STOKE)
     status = models.CharField(max_length=100, choices=STATUS)
     created_date = models.DateTimeField(auto_created=True, default=timezone.now())
@@ -78,14 +81,17 @@ class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE,related_name='products')
     color = models.ForeignKey(Color, on_delete=models.CASCADE)
     filter_price = models.ForeignKey(FilterPrice, on_delete=models.CASCADE,related_name='products')
-    
+    image = models.ImageField(upload_to='products/',default='static/images/product-image/1.webp')
+
     def __str__(self):
         return self.name
 
-    # def save(self,*args,**kwags):
-    #     if self.unique_id == None and self.created_date and self.id:
-    #         self.unique_id = self.created_date.strftime('%Y%m%d') + str(self.id)
-    #     return super().save(*args,**kwags)
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        images = Image.objects.filter(product=self)
+        print(images)
+        self.image = images[0].image
+        super(Product, self).save(*args, **kwargs)
 
 class Image(models.Model):
     image = models.ImageField(upload_to='Product_images/img')
@@ -97,4 +103,45 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+    subject = models.CharField(max_length=100)
+    message = models.TextField()
+    date = models.DateTimeField(default=timezone.now())
+
+    def __str__(self):
+        return self.email
+
+class Order(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    address = models.TextField()
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    postcode = models.IntegerField()
+    phone = models.IntegerField()
+    email = models.EmailField(max_length=100)
+    additional_info = models.TextField()
+    amount = models.CharField(max_length=100)
+    data = models.DateTimeField(default=timezone.now)
+    paid = models.BooleanField(default=False,null=True)
+    payment_id = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self) -> str:
+        return self.user
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.CharField(max_length=100)
+    image = models.ImageField(upload_to="Product_Images/Order_Img")
+    quantity = models.CharField(max_length=100)
+    price = models.CharField(max_length=100)
+    total = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.order.user

@@ -348,14 +348,14 @@
                                         <span class="new">{{product.condition}}</span>
                                     </span>
                                     <div class="thumb">
-                                        <a href="single-product.html" class="image">
+                                        <a href="{% url 'product_detail' product.slug %}" class="image">
                                             <img src="/media/{{product.images.first.image}}" alt="Product" style="height:280px; width:276px" />
                                             <img class="hover-image" src="{{product.images.first.image.url}}" alt="Product" />
                                         </a>
                                     </div>
                                     <div class="content">
                                         <br>
-                                        <span class="category"><a href="#">{{product.category}}</a></span>
+                                        <span class="category"><a href="{% url 'product_detail' product.slug %}">{{product.category}}</a></span>
                                         <h5 class="title"><a href="single-product.html">{{product.name|truncatewords:5}}
                                             </a>
                                         </h5>
@@ -364,7 +364,7 @@
                                         </span>
                                     </div>
                                     <div class="actions">
-                                                <button title="Add To Cart" class="action add-to-cart" data-bs-toggle="modal" data-bs-target="#exampleModal-Cart"><i
+                                                <button title="Add To Cart" class="action add-to-cart" data-bs-toggle="modal" data-bs-target="#exampleModal-Cart-{{product.pk}}"><i
                                                     class="pe-7s-shopbag"></i></button>
                                                 <button class="action wishlist" title="Wishlist" data-bs-toggle="modal" data-bs-target="#exampleModal-Wishlist"><i
                                                         class="pe-7s-like"></i></button>
