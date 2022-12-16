@@ -142,3 +142,6 @@ EMAIL_HOST_USER = 'tops.jan2022@gmail.com'
 EMAIL_HOST_PASSWORD = 'dstmobcgvxnaxnqj'
 
 CART_SESSION_ID = 'cart'
+
+razor_pay_key_id ='rzp_test_95FiHjFqCT3I7J'
+key_secret = 'L2ZhpTQXvzx1LpwNRbaDRMD3'

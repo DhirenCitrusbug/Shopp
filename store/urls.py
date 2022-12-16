@@ -11,9 +11,6 @@ urlpatterns = [
     path('register/', register,name='register'),
     path('logout/', logout,name='logout'),
     path('checkout/', checkout,name='checkout'),
-
-    # Cart
-
     path('cart/add/<int:id>/', cart_add, name='cart_add'),
     path('cart/item_clear/<int:id>/', item_clear, name='item_clear'),
     path('cart/item_increment/<int:id>/',
@@ -22,4 +19,8 @@ urlpatterns = [
          item_decrement, name='item_decrement'),
     path('cart/cart_clear/', cart_clear, name='cart_clear'),
     path('cart/',cart_detail,name='cart_detail'),
+    path('place_order/',place_order,name='place_order'),
+    path('success/',success,name='success'),
+    path('wishlist/<slug>',user_wishlist,name='user_wishlist'),
+    path('wishlist/',view_wishlist,name='wishlist'),
 ]

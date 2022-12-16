@@ -1,6 +1,7 @@
 {% extends 'base/base.html' %}
 {% block content %}
 {% load static %}
+{% load wishlist %}
         <!-- offcanvas overlay start -->
         <div class="offcanvas-overlay"></div>
         <!-- offcanvas overlay end -->
@@ -13,31 +14,17 @@
                 </div>
                 <div class="body customScroll">
                     <ul class="minicart-product-list">
+                    {% for wishlist in user.wishlist.all %}
                         <li>
-                            <a href="single-product.html" class="image"><img src="{% static 'images/product-image/1.webp' %}" alt="Cart product Image"></a>
+                            <a href="single-product.html" class="image"><img src="{{wishlist.product.image.url}}" alt="Cart product Image"></a>
                             <div class="content">
-                                <a href="single-product.html" class="title">Modern Smart Phone</a>
-                                <span class="quantity-price">1 x <span class="amount">$21.86</span></span>
-                                <a href="#" class="remove">×</a>
+                                <a href="single-product.html" class="title">{{wishlist.product.name | truncatewords:4}}</a>
+                                <span class="quantity-price"><span class="amount">₹{{wishlist.product.price}}</span></span>
+                                <a href="" class="remove">×</a>
                             </div>
                         </li>
-                        <li>
-                            <a href="single-product.html" class="image"><img src="{% static 'images/product-image/2.webp' %}" alt="Cart product Image"></a>
-                            <div class="content">
-                                <a href="single-product.html" class="title">Bluetooth Headphone</a>
-                                <span class="quantity-price">1 x <span class="amount">$13.28</span></span>
-                                <a href="#" class="remove">×</a>
-                            </div>
-                        </li>
-                        <li>
-                            <a href="single-product.html" class="image"><img src="{% static 'images/product-image/3.webp' %}" alt="Cart product Image"></a>
-                            <div class="content">
-                                <a href="single-product.html" class="title">Smart Music Box</a>
-                                <span class="quantity-price">1 x <span class="amount">$17.34</span></span>
-                                <a href="#" class="remove">×</a>
-                            </div>
-                        </li>
-                    </ul>
+                    {% endfor %}
+                </ul>
                 </div>
                 <div class="foot">
                     <div class="buttons">
@@ -56,36 +43,22 @@
                 </div>
                 <div class="body customScroll">
                     <ul class="minicart-product-list">
+                        {% for key,product in request.session.cart.items %}
                         <li>
-                            <a href="single-product.html" class="image"><img src="{% static 'images/product-image/1.webp' %}" alt="Cart product Image"></a>
+                            <a href="single-product.html" class="image"><img src="{{product.image}}" alt="Cart product Image"></a>
                             <div class="content">
-                                <a href="single-product.html" class="title">Modern Smart Phone</a>
-                                <span class="quantity-price">1 x <span class="amount">$18.86</span></span>
+                                <a href="single-product.html" class="title">{{product.name | truncatewords:5}}</a>
+                                <span class="quantity-price">1 x <span class="amount">₹{{product.price}}</span></span>
                                 <a href="#" class="remove">×</a>
                             </div>
                         </li>
-                        <li>
-                            <a href="single-product.html" class="image"><img src="{% static 'images/product-image/2.webp' %}" alt="Cart product Image"></a>
-                            <div class="content">
-                                <a href="single-product.html" class="title">Bluetooth Headphone</a>
-                                <span class="quantity-price">1 x <span class="amount">$43.28</span></span>
-                                <a href="#" class="remove">×</a>
-                            </div>
-                        </li>
-                        <li>
-                            <a href="single-product.html" class="image"><img src="{% static 'images/product-image/3.webp' %}" alt="Cart product Image"></a>
-                            <div class="content">
-                                <a href="single-product.html" class="title">Smart Music Box</a>
-                                <span class="quantity-price">1 x <span class="amount">$37.34</span></span>
-                                <a href="#" class="remove">×</a>
-                            </div>
-                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
                 <div class="foot">
                     <div class="buttons mt-30px">
-                        <a href="cart.html" class="btn btn-dark btn-hover-primary mb-30px">view cart</a>
-                        <a href="checkout.html" class="btn btn-outline-dark current-btn">checkout</a>
+                        <a href="{% url 'cart_detail' %}" class="btn btn-dark btn-hover-primary mb-30px">view cart</a>
+                        <a href="{% url 'checkout' %}" class="btn btn-outline-dark current-btn">checkout</a>
                     </div>
                 </div>
             </div>
@@ -366,7 +339,7 @@
                                     <div class="actions">
                                                 <button title="Add To Cart" class="action add-to-cart" data-bs-toggle="modal" data-bs-target="#exampleModal-Cart-{{product.pk}}"><i
                                                     class="pe-7s-shopbag"></i></button>
-                                                <button class="action wishlist" title="Wishlist" data-bs-toggle="modal" data-bs-target="#exampleModal-Wishlist"><i
+                                                <button class="action wishlist" title="Wishlist" data-bs-toggle="modal" data-bs-target="#exampleModal-Wishlist-{{product.pk}}"><i
                                                         class="pe-7s-like"></i></button>
                                                 <button class="action quickview" data-link-action="quickview" title="Quick view" data-bs-toggle="modal" data-bs-target="#exampleModal-{{product.pk}}"><i class="pe-7s-look"></i></button>
                                                 <button class="action compare" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal-Compare"><i

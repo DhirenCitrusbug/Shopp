@@ -1,4 +1,4 @@
-
+{% load wishlist %}
 <!DOCTYPE html>
 <html lang="zxx" dir="ltr">
 
@@ -84,6 +84,7 @@
                                 <!-- Single Wedge Start -->
                                 <a href="#offcanvas-wishlist" class="header-action-btn offcanvas-toggle">
                                     <i class="pe-7s-like"></i>
+                                    <span class="header-action-num"> {{request.session.wishlist_count}}</span>
                                 </a>
                                 <!-- Single Wedge End -->
                                 <a href="#offcanvas-cart" class="header-action-btn header-action-btn-cart offcanvas-toggle pr-0">
@@ -405,7 +406,7 @@
                             <!-- Swiper -->
                             <div class="swiper-container gallery-top">
                                 <div class="swiper-wrapper">
-                                    {% for image in product.image.all %}
+                                    {% for image in product.images.all %}
                                     <div class="swiper-slide">
                                         <img class="img-responsive m-auto" src="{{image.image.url}}" alt="">
                                     </div>
@@ -426,7 +427,7 @@
                             </div>
                             <div class="swiper-container gallery-thumbs mt-20px slider-nav-style-1 small-nav">
                                 <div class="swiper-wrapper">
-                                    {% for image in product.image.all %}
+                                    {% for image in product.images.all %}
 
                                     <div class="swiper-slide">
                                         <img class="img-responsive m-auto" src="{{image.image.url}}" alt="">
@@ -533,11 +534,11 @@
                 <div class="modal-body text-center">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="pe-7s-close"></i></button>
                     <div class="tt-modal-messages">
-                        <i class="pe-7s-check"></i> Added to cart successfully!
+                        {% comment %} <i class="pe-7s-check"></i> Added to cart successfully! {% endcomment %}
                     </div>
                     <div class="tt-modal-product">
                         <div class="tt-img">
-                            <img src="{{product.image.all.first.image.url}}" alt="Modern Smart Phone">
+                            <img src="{{product.images.all.first.image.url}}" alt="Modern Smart Phone">
                         </div>
                         <h2 class="tt-title"><a href="#">{{product.name|truncatewords:4}}</a></h2>
                         <a href="{% url 'cart_add' product.id %}">Add To Cart</a>
@@ -548,24 +549,27 @@
     </div>     
     {% endfor %}
     <!-- Modal wishlist -->
-    <div class="modal customize-class fade" id="exampleModal-Wishlist" tabindex="-1"   aria-hidden="true">
+    {% for product in products %}
+    <div class="modal customize-class fade" id="exampleModal-Wishlist-{{product.pk}}" tabindex="-1"   aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body text-center">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="pe-7s-close"></i></button>
                     <div class="tt-modal-messages">
-                        <i class="pe-7s-check"></i> Added to Wishlist successfully!
+                        {% comment %} <i class="pe-7s-check"></i> Added to Wishlist successfully! {% endcomment %}
                     </div>
                     <div class="tt-modal-product">
                         <div class="tt-img">
-                            <img src="{% static 'images/product-image/1.webp' %}" alt="Modern Smart Phone">
+                            <img src="{{product.images.all.first.image.url}}" alt="Modern Smart Phone">
                         </div>
-                        <h2 class="tt-title"><a href="#">Modern Smart Phone</a></h2>
+                        <h2 class="tt-title"><a href="{% url 'cart_add' product.id %}">{{product.name|truncatewords:4}}</a></h2>
+                            <a href="{% url 'user_wishlist' product.slug %}">{% if product|is_in_wishlist:user %}Remove from{% else %}Add To{% endif %} Wishlist</a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
+    {% endfor %}
     <!-- Modal compare -->
     <div class="modal customize-class fade" id="exampleModal-Compare" tabindex="-1"   aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">

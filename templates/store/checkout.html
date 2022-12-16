@@ -1,5 +1,6 @@
 {% extends 'base/base.html' %}
 {% block content %}
+{% load cart_tag %}
         <!-- offcanvas overlay start -->
         <div class="offcanvas-overlay"></div>
         <!-- offcanvas overlay end -->
@@ -55,30 +56,16 @@
                 </div>
                 <div class="body customScroll">
                     <ul class="minicart-product-list">
+                        {% for key,product in request.session.cart.items %}
                         <li>
-                            <a href="single-product.html" class="image"><img src="assets/images/product-image/1.webp" alt="Cart product Image"></a>
+                            <a href="single-product.html" class="image"><img src="{{product.image}}" alt="Cart product Image"></a>
                             <div class="content">
-                                <a href="single-product.html" class="title">Modern Smart Phone</a>
-                                <span class="quantity-price">1 x <span class="amount">$18.86</span></span>
+                                <a href="single-product.html" class="title">{{product.name | truncatewords:5}}</a>
+                                <span class="quantity-price">1 x <span class="amount">₹{{product.price}}</span></span>
                                 <a href="#" class="remove">×</a>
                             </div>
                         </li>
-                        <li>
-                            <a href="single-product.html" class="image"><img src="assets/images/product-image/2.webp" alt="Cart product Image"></a>
-                            <div class="content">
-                                <a href="single-product.html" class="title">Bluetooth Headphone</a>
-                                <span class="quantity-price">1 x <span class="amount">$43.28</span></span>
-                                <a href="#" class="remove">×</a>
-                            </div>
-                        </li>
-                        <li>
-                            <a href="single-product.html" class="image"><img src="assets/images/product-image/3.webp" alt="Cart product Image"></a>
-                            <div class="content">
-                                <a href="single-product.html" class="title">Smart Music Box</a>
-                                <span class="quantity-price">1 x <span class="amount">$37.34</span></span>
-                                <a href="#" class="remove">×</a>
-                            </div>
-                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
                 <div class="foot">
@@ -249,6 +236,8 @@
         <!-- checkout area start -->
         <div class="checkout-area pt-100px pb-100px">
             <div class="container">
+                <form action="{% url 'place_order' %}" method="post">
+                    {% csrf_token %}
                 <div class="row">
                     <div class="col-lg-7">
                         <div class="billing-info-wrap">
@@ -257,69 +246,65 @@
                                 <div class="col-lg-6 col-md-6">
                                     <div class="billing-info mb-4">
                                         <label>First Name</label>
-                                        <input type="text" />
+                                        <input type="text" name="first_name" value="" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-6">
                                     <div class="billing-info mb-4">
                                         <label>Last Name</label>
-                                        <input type="text" />
+                                        <input type="text" name="last_name" value="" />
                                     </div>
                                 </div>
+                                
+                                   
+                                        
+                                        <input type="text" name="payment_id" value="{{payment.id}}" hidden />
+                                        <input type="text" name="amount" value="{{ cart_total_amount|add:0 }}"  /> 
+                                 
                                 <div class="col-lg-12">
-                                    <div class="billing-info mb-4">
-                                        <label>Company Name</label>
-                                        <input type="text" />
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="billing-select mb-4">
-                                        <label>Country</label>
-                                        <select>
-                                            <option>Select a country</option>
-                                            <option>Azerbaijan</option>
-                                            <option>Bahamas</option>
-                                            <option>Bahrain</option>
-                                            <option>Bangladesh</option>
-                                            <option>Barbados</option>
-                                        </select>
-                                    </div>
+                                    
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="billing-info mb-4">
                                         <label>Street Address</label>
-                                        <input class="billing-address" placeholder="House number and street name" type="text" />
-                                        <input placeholder="Apartment, suite, unit etc." type="text" />
+                                        <input class="billing-address" name="address" placeholder="House number and street name" type="text" />
+                                      
                                     </div>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="billing-info mb-4">
-                                        <label>Town / City</label>
-                                        <input type="text" />
+                                        <label>County</label>
+                                        <input type="text" name="country"/>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-6">
                                     <div class="billing-info mb-4">
-                                        <label>State / County</label>
-                                        <input type="text" />
+                                        <label>State</label>
+                                        <input type="text" name="state" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-6">
                                     <div class="billing-info mb-4">
                                         <label>Postcode / ZIP</label>
-                                        <input type="text" />
+                                        <input type="text" name="postcode" />
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6">
+                                    <div class="billing-info mb-4">
+                                        <label>City</label>
+                                        <input type="text" name="city" />
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-6">
                                     <div class="billing-info mb-4">
                                         <label>Phone</label>
-                                        <input type="text" />
+                                        <input type="text" name="phone"/>
                                     </div>
                                 </div>
                                 <div class="col-lg-6 col-md-6">
                                     <div class="billing-info mb-4">
                                         <label>Email Address</label>
-                                        <input type="text" />
+                                        <input type="text" name="email" value="{{request.user.email}}" />
                                     </div>
                                 </div>
                             </div>
@@ -336,7 +321,7 @@
                                 <h4>Additional information</h4>
                                 <div class="additional-info">
                                     <label>Order notes</label>
-                                    <textarea placeholder="Notes about your order, e.g. special notes for delivery. " name="message"></textarea>
+                                    <textarea placeholder="Notes about your order, e.g. special notes for delivery. " name="additional_info"></textarea>
                                 </div>
                             </div>
                             <div class="checkout-account mt-25">
@@ -418,6 +403,7 @@
                         </div>
                     </div>
                     <div class="col-lg-5 mt-md-30px mt-lm-30px ">
+                        
                         <div class="your-order-area">
                             <h3>Your order</h3>
                             <div class="your-order-wrap gray-bg-4">
@@ -430,22 +416,26 @@
                                     </div>
                                     <div class="your-order-middle">
                                         <ul>
-                                            <li><span class="order-middle-left">Product Name X 1</span> <span
-                                                class="order-price">$100 </span></li>
-                                            <li><span class="order-middle-left">Product Name X 1</span> <span
-                                                class="order-price">$100 </span></li>
+                                            {% for key,product in request.session.cart.items %}
+                                            <li><span class="order-middle-left">{{product.name | truncatewords:4 }} x {{product.quantity}}</span> <span
+                                                class="order-price">₹{{product.price|multiply:product.quantity}} </span></li>
+                                            {% endfor %}
                                         </ul>
                                     </div>
                                     <div class="your-order-bottom">
                                         <ul>
+                                            <li class="your-order-shipping">Tax</li>
+                                            <li>₹70</li>
+                                        </ul>
+                                        <ul>
                                             <li class="your-order-shipping">Shipping</li>
-                                            <li>Free shipping</li>
+                                            <li>₹70</li>
                                         </ul>
                                     </div>
                                     <div class="your-order-total">
                                         <ul>
                                             <li class="order-total">Total</li>
-                                            <li>$100</li>
+                                            <li>{{cart_total_amount|add:70|add:70}}</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -491,12 +481,14 @@
                                 </div>
                             </div>
                             <div class="Place-order mt-25">
-                                <a class="btn-hover" href="#">Place Order</a>
+                                <a class="btn-hover"><button type="submit">Continue</button></a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </form>
             </div>
         </div>
         <!-- checkout area end -->
+
 {% endblock %}

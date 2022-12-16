@@ -126,14 +126,15 @@ class Order(models.Model):
     postcode = models.IntegerField()
     phone = models.IntegerField()
     email = models.EmailField(max_length=100)
-    additional_info = models.TextField()
+    additional_info = models.TextField(null=True, blank=True)
     amount = models.CharField(max_length=100)
-    data = models.DateTimeField(default=timezone.now)
+    date = models.DateTimeField(default=timezone.now)
     paid = models.BooleanField(default=False,null=True)
-    payment_id = models.CharField(max_length=100, null=True, blank=True)
-
+    order_id = models.CharField(max_length=100, null=True, blank=True)
+    razorpay_payment_id = models.CharField(max_length=100, null=True, blank=True)
+    razorpay_signature = models.CharField(max_length=100, null=True, blank=True)
     def __str__(self) -> str:
-        return self.user
+        return self.user.email
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
@@ -144,4 +145,8 @@ class OrderItem(models.Model):
     total = models.CharField(max_length=100)
 
     def __str__(self) -> str:
-        return self.order.user
+        return self.product
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='wishlist')
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='wishlist')

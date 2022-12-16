@@ -1,16 +1,22 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from . models import Product, Category, FilterPrice, Color, Brand, Contact
+from . models import Order, OrderItem, Product, Category, FilterPrice, Color, Brand, Contact, Tag, Wishlist
 from shop import settings
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from cart.cart import Cart
+import razorpay
 # Create your views here.
+
+client = razorpay.Client(auth=(settings.razor_pay_key_id, settings.key_secret))
 
 def index(request):
     products = Product.objects.all()
     context = {'products':products}
+    wishlists = Wishlist.objects.filter(user=request.user)
+    request.session['wishlist_count'] = wishlists.count()
     return render(request,'store/index.html',context)
 
 def products(request):
@@ -121,6 +127,9 @@ def login(request):
         user = auth.authenticate(username=username,password=password)
         if user is not None:
             auth.login(request,user)
+
+            wishlist = Wishlist.objects.filter(user=user)
+            request.session['wishlist_count'] = wishlist.count()
             return redirect('index')
         else:
             messages.warning(request,"Invalid Credentials")
@@ -178,4 +187,94 @@ def cart_detail(request):
     return render(request, 'store/cart.html')
 
 def checkout(request):
+
+ 
     return render(request,'store/checkout.html')
+
+def place_order(request):
+    amount =  int(request.POST.get("amount"))
+    print(amount)
+    data = { "amount":amount*100, "currency": "INR", "receipt": "order_rcptid_11" }
+    payment = client.order.create(data=data)
+    context = {
+        'payment':payment,
+        'key_id':settings.razor_pay_key_id
+    }
+    print(context)
+
+    first_name = request.POST.get('first_name')
+    last_name = request.POST.get('last_name')
+    country =  request.POST.get('country')
+    address = request.POST.get('address')
+    city = request.POST.get('city')
+    state = request.POST.get('state')
+    postcode = request.POST.get('postcode')
+    phone = request.POST.get('phone')
+    email = request.POST.get('email')
+    additional_info = request.POST.get('additional_info')
+    amount = data.get('amount')
+    order_id =payment['id']
+    
+    order = Order.objects.create(
+        user = User.objects.get(pk=request.user.pk),
+        first_name=first_name,
+        last_name=last_name,
+        country=country,
+        address=address,
+        city=city,
+        state=state,
+        postcode=postcode,
+        phone=phone,
+        email=email,
+        additional_info=additional_info,
+        amount=amount,
+        order_id=order_id,
+    )
+    order.save()
+
+    cart = request.session.get('cart')
+    for item in cart:
+        order_id = OrderItem.objects.create(
+            order = order,
+            product = cart[item]['name'],
+            image = cart[item]['image'],
+            price = cart[item]['price'],
+            total = str(int(cart[item]['price'])*int(cart[item]['quantity']))
+        )
+    print(cart)
+    print('cart')
+    return render(request,'store/place_order.html',context)
+
+    
+def success(request):
+    order_id = request.GET.get('order_id')
+    razorpay_payment_id = request.GET.get('razorpay_payment_id')
+    razorpay_signature = request.GET.get('razorpay_signature')
+
+    order = Order.objects.get(order_id=order_id)
+    order.razorpay_payment_id = razorpay_payment_id
+    order.razorpay_signature = razorpay_signature
+    order.paid = "True"
+    order.save()
+    cart = Cart(request)
+    cart.clear()
+    return render(request,'store/thank_you.html')
+
+
+def user_wishlist(request,slug):
+    user = User.objects.get(username=request.user.username)
+    product = Product.objects.get(slug=slug)
+    try:
+        print(product)
+        existing_wishlist = Wishlist.objects.get(user=user,product=product)
+        print(existing_wishlist)
+        existing_wishlist.delete()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    except:
+        wishlist =Wishlist.objects.create(user=user,product=product)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+def view_wishlist(request):
+    wishlists = Wishlist.objects.filter(user=request.user)
+    context = {'wishlists':wishlists}
+    return render(request,'store/wishlist.html',context)
