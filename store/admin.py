@@ -27,4 +27,7 @@ admin.site.register(Contact)
 admin.site.register(Order,OrderAdmin)
 admin.site.register(OrderItem)
 admin.site.register(Wishlist)
-
+admin.site.register(Profile)
+admin.site.register(Review)
+admin.site.register(Reply)
+admin.site.register(Compare)

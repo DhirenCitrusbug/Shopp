@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from . models import Order, OrderItem, Product, Category, FilterPrice, Color, Brand, Contact, Tag, Wishlist
+from . models import Compare, Order, OrderItem, Product, Category, FilterPrice, Color, Brand, Contact, Review, Tag, Wishlist
 from shop import settings
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -17,6 +17,8 @@ def index(request):
     context = {'products':products}
     wishlists = Wishlist.objects.filter(user=request.user)
     request.session['wishlist_count'] = wishlists.count()
+    compares = Compare.objects.filter(user=request.user)
+    request.session['compare_count'] = compares.count()
     return render(request,'store/index.html',context)
 
 def products(request):
@@ -130,6 +132,8 @@ def login(request):
 
             wishlist = Wishlist.objects.filter(user=user)
             request.session['wishlist_count'] = wishlist.count()
+            compares = Compare.objects.filter(user=user)
+            request.session['compare_count'] = compares.count()
             return redirect('index')
         else:
             messages.warning(request,"Invalid Credentials")
@@ -239,7 +243,8 @@ def place_order(request):
             product = cart[item]['name'],
             image = cart[item]['image'],
             price = cart[item]['price'],
-            total = str(int(cart[item]['price'])*int(cart[item]['quantity']))
+            total = str(int(cart[item]['price'])*int(cart[item]['quantity'])),
+            quantity = cart[item]['quantity']
         )
     print(cart)
     print('cart')
@@ -278,3 +283,45 @@ def view_wishlist(request):
     wishlists = Wishlist.objects.filter(user=request.user)
     context = {'wishlists':wishlists}
     return render(request,'store/wishlist.html',context)
+
+login_required(login_url='/login')
+def my_account(request):
+    orders = Order.objects.filter(user=request.user)
+    context = {'orders':orders}
+    return render(request,'account/account.html',context)
+
+
+def order_detail(request,pk):
+    order_item = OrderItem.objects.get(pk=pk)
+    context = {'order_item':order_item}
+    return render(request,'account/order_detail.html',context)
+
+def add_review(request):
+    user = User.objects.get(username=request.user)
+    product = Product.objects.get(id=request.POST.get('product_id'))
+    message = request.POST.get('message')
+    if message is None:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+    review = Review.objects.create(user=user,product=product,message=message)
+    review.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
+
+def compare(request):
+    products = Product.objects.all()
+    compare_products = Compare.objects.filter(user=request.user)
+    context = {'products':products,'compare_products':compare_products}
+    return render(request,'store/compare.html',context)
+
+
+def add_to_campare(request,slug):
+    user = User.objects.get(username=request.user.username)
+    product = Product.objects.get(slug=slug)
+    try:
+        print(product)
+        existing_compare = Compare.objects.get(user=user,product=product)
+        print(existing_compare)
+        existing_compare.delete()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    except:
+        compare =Compare.objects.create(user=user,product=product)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

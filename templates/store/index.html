@@ -28,7 +28,7 @@
                 </div>
                 <div class="foot">
                     <div class="buttons">
-                        <a href="wishlist.html" class="btn btn-dark btn-hover-primary mt-30px">view wishlist</a>
+                        <a href="{% url 'wishlist' %}" class="btn btn-dark btn-hover-primary mt-30px">view wishlist</a>
                     </div>
                 </div>
             </div>
@@ -220,7 +220,7 @@
                                             <span class="mini-title">Only</span>
                                         <span class="amount">$24.00</span>
                                         </span>
-                                        <a href="shop-left-sidebar.html" class="btn btn-primary text-capitalize">Shop All Devices</a>
+                                        <a href="{% url 'products' %}" class="btn btn-primary text-capitalize">Shop All Devices</a>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex justify-content-center position-relative align-items-center">
@@ -245,7 +245,7 @@
                                             <span class="mini-title">Only</span>
                                         <span class="amount">$24.00</span>
                                         </span>
-                                        <a href="shop-left-sidebar.html" class="btn btn-primary text-capitalize">Shop All Devices</a>
+                                        <a href="{% url 'products' %}" class="btn btn-primary text-capitalize">Shop All Devices</a>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 d-flex justify-content-center position-relative align-items-center">
@@ -342,7 +342,7 @@
                                                 <button class="action wishlist" title="Wishlist" data-bs-toggle="modal" data-bs-target="#exampleModal-Wishlist-{{product.pk}}"><i
                                                         class="pe-7s-like"></i></button>
                                                 <button class="action quickview" data-link-action="quickview" title="Quick view" data-bs-toggle="modal" data-bs-target="#exampleModal-{{product.pk}}"><i class="pe-7s-look"></i></button>
-                                                <button class="action compare" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal-Compare"><i
+                                                <button class="action compare" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal-Compare-{{product.pk}}"><i
                                                         class="pe-7s-refresh-2"></i></button>
                                             </div>
                                 </div>
@@ -526,7 +526,7 @@
                 <div class="row justify-content-center align-items-center h-100">
                     <div class="col-12 text-center">
                         <h2 class="title"> <span>Smart Fashion</span> With Smart Devices </h2>
-                        <a href="shop-left-sidebar.html" class="btn btn-primary text-capitalize m-auto">Shop All Devices</a>
+                        <a href="{% url 'products' %}" class="btn btn-primary text-capitalize m-auto">Shop All Devices</a>
                     </div>
                 </div>
             </div>

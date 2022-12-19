@@ -137,16 +137,51 @@ class Order(models.Model):
         return self.user.email
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE,related_name='order_items')
     product = models.CharField(max_length=100)
     image = models.ImageField(upload_to="Product_Images/Order_Img")
     quantity = models.CharField(max_length=100)
     price = models.CharField(max_length=100)
     total = models.CharField(max_length=100)
-
+    slug = models.SlugField(null=True,blank=True)
     def __str__(self) -> str:
         return self.product
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.product)
+        super(OrderItem, self).save(*args, **kwargs)
 
 class Wishlist(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='wishlist')
     product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='wishlist')
+
+class Profile(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name='profile')
+    profile_pic = models.ImageField(upload_to='profile_pictures',default='profile_pictures/default_profile_pic.jpg')
+    birth_date = models.DateField(null=True,blank=True)
+    address = models.TextField(null=True,blank=True)
+    city = models.CharField(max_length=100,null=True,blank=True)
+    state = models.CharField(max_length=100,null=True,blank=True)
+    postcode = models.IntegerField(null=True,blank=True)
+    phone = models.IntegerField(null=True,blank=True)
+    email = models.EmailField(max_length=100,null=True,blank=True)
+    additional_info = models.TextField(null=True, blank=True)
+
+class Review(models.Model):
+    user = models.ForeignKey(User,on_delete=models.SET_NULL,related_name='reviews',null=True)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,related_name='reviews')
+    message = models.TextField()
+    rating = models.PositiveIntegerField(default=5)
+
+
+class Reply(models.Model):
+    user = models.ForeignKey(User,on_delete=models.SET_NULL,related_name='replies',null=True)
+    to = models.ForeignKey(Review,on_delete=models.CASCADE,related_name='replies')
+    message = models.TextField()
+
+class Compare(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="compare_list")
+    product = models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)
+
+    def __str__(self):
+        return self.product.name

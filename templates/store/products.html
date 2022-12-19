@@ -304,10 +304,10 @@
                                                         <div class="actions">
                                                             <button title="Add To Cart" class="action add-to-cart" data-bs-toggle="modal" data-bs-target="#exampleModal-Cart-{{product.pk}}"><i
                                                                 class="pe-7s-shopbag"></i></button>
-                                                            <button class="action wishlist" title="Wishlist" data-bs-toggle="modal" data-bs-target="#exampleModal-Wishlist"><i
+                                                            <button class="action wishlist" title="Wishlist" data-bs-toggle="modal" data-bs-target="#exampleModal-Wishlist-{{product.pk}}"><i
                                                                     class="pe-7s-like"></i></button>
                                                             <button class="action quickview" data-link-action="quickview" title="Quick view" data-bs-toggle="modal" data-bs-target="#exampleModal-{{product.pk}}"><i class="pe-7s-look"></i></button>
-                                                            <button class="action compare" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal-Compare"><i
+                                                            <button class="action compare" title="Compare" data-bs-toggle="modal" data-bs-target="#exampleModal-Compare-{{product.pk}}"><i
                                                                     class="pe-7s-refresh-2"></i></button>
                                                         </div>
                                                     </div>
@@ -337,7 +337,7 @@
                                                             <div class="content">
                                                                 <span class="category"><a href="#">{{product.category}}</a></span>
                                                                 <h5 class="title"><a href="{% url 'product_detail' product.slug %}">{{product.name|truncatewords:5}}</a></h5>
-                                                                <p>{{product.description|truncatewords:15}} </p>
+                                                                <p>{{product.description|truncatewords:15 | safe}} </p>
                                                             </div>
                                                             <div class="box-inner">
                                                                 <span class="price">
@@ -496,7 +496,7 @@
                 </div>
             </div>
         </div>
- 
+        <script>
             function sort_by(sortby){
              window.location.href = window.location.pathname + `?sortby=${sortby}`
 

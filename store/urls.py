@@ -23,4 +23,9 @@ urlpatterns = [
     path('success/',success,name='success'),
     path('wishlist/<slug>',user_wishlist,name='user_wishlist'),
     path('wishlist/',view_wishlist,name='wishlist'),
+    path('account/',my_account,name='account'),
+    path('order_detail/<pk>',order_detail,name='order_detail'),
+    path('add_review/',add_review,name='add_review'),
+    path('compare/',compare,name='compare'),
+    path('add_to_compare/<slug>',add_to_campare,name='add_to_compare'),
 ]
