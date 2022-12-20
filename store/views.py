@@ -45,7 +45,6 @@ def products(request):
     price_filter = FilterPrice.objects.all()
     colors = Color.objects.all()
     brands = Brand.objects.all()
-    print('=============',request.GET)
     if request.GET.get('sortby'):
         print(products)
 
