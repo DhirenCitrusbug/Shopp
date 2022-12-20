@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from . models import Compare, Order, OrderItem, Product, Category, FilterPrice, Color, Brand, Contact, Review, Tag, Wishlist
+from . models import Compare, Order, OrderItem, Product, Category, FilterPrice, Color, Brand, Contact, Profile, Review, Tag, Wishlist
 from shop import settings
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -13,12 +13,17 @@ import razorpay
 client = razorpay.Client(auth=(settings.razor_pay_key_id, settings.key_secret))
 
 def index(request):
+    # request.META['HTTP_CACHE_CONTROL']='no-cache'
+    # print(request.META['HTTP_CACHE_CONTROL'])
     products = Product.objects.all()
     context = {'products':products}
-    wishlists = Wishlist.objects.filter(user=request.user)
-    request.session['wishlist_count'] = wishlists.count()
-    compares = Compare.objects.filter(user=request.user)
-    request.session['compare_count'] = compares.count()
+    try:
+        wishlists = Wishlist.objects.filter(user=request.user)
+        request.session['wishlist_count'] = wishlists.count()
+        compares = Compare.objects.filter(user=request.user)
+        request.session['compare_count'] = compares.count()
+    except:
+        pass
     return render(request,'store/index.html',context)
 
 def products(request):
@@ -138,6 +143,7 @@ def login(request):
             messages.warning(request,"Invalid Credentials")
     return render(request,'store/login.html')
 
+
 def logout(request):
     user = request.user
     if user:
@@ -194,6 +200,7 @@ def checkout(request):
  
     return render(request,'store/checkout.html')
 
+@login_required(login_url='/login')
 def place_order(request):
     amount =  int(request.POST.get("amount"))
     print(amount)
@@ -249,7 +256,7 @@ def place_order(request):
     print('cart')
     return render(request,'store/place_order.html',context)
 
-    
+@login_required(login_url='/login')
 def success(request):
     order_id = request.GET.get('order_id')
     razorpay_payment_id = request.GET.get('razorpay_payment_id')
@@ -264,7 +271,7 @@ def success(request):
     cart.clear()
     return render(request,'store/thank_you.html')
 
-
+@login_required(login_url='/login')
 def user_wishlist(request,slug):
     user = User.objects.get(username=request.user.username)
     product = Product.objects.get(slug=slug)
@@ -278,23 +285,40 @@ def user_wishlist(request,slug):
         wishlist =Wishlist.objects.create(user=user,product=product)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+@login_required(login_url='/login')
 def view_wishlist(request):
     wishlists = Wishlist.objects.filter(user=request.user)
     context = {'wishlists':wishlists}
     return render(request,'store/wishlist.html',context)
 
-login_required(login_url='/login')
+@login_required(login_url='/login')
 def my_account(request):
+    if request.method == "POST":
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        birth_date = request.POST.get('birth_date')
+        user = User.objects.get(id=request.user.id)
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        user.save()
+        profile = Profile.objects.get(user=user)
+        profile.birth_date = birth_date
+        profile.save()
     orders = Order.objects.filter(user=request.user)
-    context = {'orders':orders}
+    profile = Profile.objects.get(user=request.user)
+    profile.birth_date = profile.birth_date.strftime("%Y-%m-%d")
+    context = {'orders':orders,'profile':profile}
     return render(request,'account/account.html',context)
 
-
+@login_required(login_url='/login')
 def order_detail(request,pk):
     order_item = OrderItem.objects.get(pk=pk)
     context = {'order_item':order_item}
     return render(request,'account/order_detail.html',context)
 
+@login_required(login_url='/login')
 def add_review(request):
     user = User.objects.get(username=request.user)
     product = Product.objects.get(id=request.POST.get('product_id'))
@@ -305,13 +329,14 @@ def add_review(request):
     review.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER')) 
 
+@login_required(login_url='/login')
 def compare(request):
     products = Product.objects.all()
     compare_products = Compare.objects.filter(user=request.user)
     context = {'products':products,'compare_products':compare_products}
     return render(request,'store/compare.html',context)
 
-
+@login_required(login_url='/login')
 def add_to_campare(request,slug):
     user = User.objects.get(username=request.user.username)
     product = Product.objects.get(slug=slug)

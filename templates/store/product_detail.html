@@ -356,7 +356,7 @@
                     <div class="description-review-topbar nav">
                         <button data-bs-toggle="tab" data-bs-target="#des-details2">Information</button>
                         <button class="active" data-bs-toggle="tab" data-bs-target="#des-details1">Description</button>
-                        <button data-bs-toggle="tab" data-bs-target="#des-details3">Reviews (02)</button>
+                        <button data-bs-toggle="tab" data-bs-target="#des-details3">Reviews ({{product.reviews.all.count}})</button>
                     </div>
                     <div class="tab-content description-review-bottom">
                         <div id="des-details2" class="tab-pane">
@@ -549,8 +549,8 @@
             </div>
         </div>
     </div>
-    <!-- Product Area Start -->
-    <div class="product-area related-product">
+    <!-- Product Area Start --> <br><br>
+    {% comment %} <div class="product-area related-product">
         <div class="container">
             <!-- Section Title & Tab Start -->
             <div class="row">
@@ -868,7 +868,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> {% endcomment %}
     <!-- Product Area End -->
     <!-- Footer Area Start -->
     {% endblock %}

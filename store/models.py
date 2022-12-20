@@ -162,10 +162,12 @@ class Profile(models.Model):
     address = models.TextField(null=True,blank=True)
     city = models.CharField(max_length=100,null=True,blank=True)
     state = models.CharField(max_length=100,null=True,blank=True)
-    postcode = models.IntegerField(null=True,blank=True)
+    postcode = models.CharField(max_length=100,null=True,blank=True)
+    contry = models.CharField(max_length=100,null=True,blank=True)
     phone = models.IntegerField(null=True,blank=True)
     email = models.EmailField(max_length=100,null=True,blank=True)
     additional_info = models.TextField(null=True, blank=True)
+
 
 class Review(models.Model):
     user = models.ForeignKey(User,on_delete=models.SET_NULL,related_name='reviews',null=True)

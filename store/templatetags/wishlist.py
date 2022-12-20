@@ -5,9 +5,8 @@ register = template.Library()
 @register.filter
 def is_in_wishlist(self,user):
     try:
-        wishlist = Wishlist.objects.get(user=user,product=self)
+        Wishlist.objects.get(user=user,product=self)
         return True
     except:
-        print("Not")
         return False
 
