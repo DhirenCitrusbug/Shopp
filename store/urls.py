@@ -28,4 +28,7 @@ urlpatterns = [
     path('add_review/',add_review,name='add_review'),
     path('compare/',compare,name='compare'),
     path('add_to_compare/<slug>',add_to_campare,name='add_to_compare'),
+    path('forgot-password',forgot_password,name='forgot_password'),
+    path('verify-otp',verify_otp,name='verify_otp'),
+    path('change-password',change_password,name='change_password'),
 ]

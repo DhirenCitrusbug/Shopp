@@ -4,7 +4,7 @@
 {% load static %}
 
 
-        <!-- offcanvas overlay start -->
+<!-- offcanvas overlay start -->
         <div class="offcanvas-overlay"></div>
         <!-- offcanvas overlay end -->
         <!-- OffCanvas Wishlist Start -->
@@ -30,7 +30,7 @@
                 </div>
                 <div class="foot">
                     <div class="buttons">
-                        <a href="wishlist.html" class="btn btn-dark btn-hover-primary mt-30px">view wishlist</a>
+                        <a href="{% url 'wishlist' %}" class="btn btn-dark btn-hover-primary mt-30px">view wishlist</a>
                     </div>
                 </div>
             </div>
@@ -47,9 +47,9 @@
                     <ul class="minicart-product-list">
                         {% for key,product in request.session.cart.items %}
                         <li>
-                            <a href="single-product.html" class="image"><img src="{{product.image}}" alt="Cart product Image"></a>
+                            <a href="{% url 'product_detail' product.slug %}" class="image"><img src="{{product.image}}" alt="Cart product Image"></a>
                             <div class="content">
-                                <a href="single-product.html" class="title">{{product.name | truncatewords:5}}</a>
+                                <a href="{% url 'product_detail' product.slug %}" class="title">{{product.name | truncatewords:5}}</a>
                                 <span class="quantity-price">1 x <span class="amount">₹{{product.price}}</span></span>
                                 <a href="#" class="remove">×</a>
                             </div>
@@ -59,8 +59,8 @@
                 </div>
                 <div class="foot">
                     <div class="buttons mt-30px">
-                        <a href="cart.html" class="btn btn-dark btn-hover-primary mb-30px">view cart</a>
-                        <a href="checkout.html" class="btn btn-outline-dark current-btn">checkout</a>
+                        <a href="{% url 'cart_detail' %}" class="btn btn-dark btn-hover-primary mb-30px">view cart</a>
+                        <a href="{% url 'checkout' %}" class="btn btn-outline-dark current-btn">checkout</a>
                     </div>
                 </div>
             </div>

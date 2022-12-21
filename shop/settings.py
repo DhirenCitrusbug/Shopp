@@ -135,9 +135,9 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
 EMAIL_HOST_USER = 'tops.jan2022@gmail.com'
 EMAIL_HOST_PASSWORD = 'dstmobcgvxnaxnqj'
 
@@ -145,3 +145,12 @@ CART_SESSION_ID = 'cart'
 
 razor_pay_key_id ='rzp_test_95FiHjFqCT3I7J'
 key_secret = 'L2ZhpTQXvzx1LpwNRbaDRMD3'
+
+BROKER_URL = 'redis://127.0.0.1:6379'
+RESULT_BACKEND = 'redis://127.0.0.1:6379'
+ACCEPT_CONTENT=['application/json']
+RESULT_SERIALIZER = 'json'
+TASK_SERIALIZER = 'json'
+
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = BASE_DIR / "sent_emails"

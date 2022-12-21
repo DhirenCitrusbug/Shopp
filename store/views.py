@@ -8,6 +8,8 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from cart.cart import Cart
 import razorpay
+import random
+from .task import send_otp
 # Create your views here.
 
 client = razorpay.Client(auth=(settings.razor_pay_key_id, settings.key_secret))
@@ -86,7 +88,7 @@ def search(request):
 def product_detail(request,slug):
     product = Product.objects.filter(slug=slug)
     print(product,'====================')
-    context = {'product':product[0]}
+    context = {'product':product.first}
     return render(request,'store/product_detail.html',context)
 
 def contact(request):
@@ -349,3 +351,56 @@ def add_to_campare(request,slug):
     except:
         compare =Compare.objects.create(user=user,product=product)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        user = User.objects.get(email=email)
+        from_email = user.email
+        global otp
+        request.session['otp'] = random.randint(1000,9999)
+        request.session['email'] = email
+        otp = request.session['otp']
+        send_otp('OTP Verification',f'Your OTP for forgot password is {otp}',from_email,['to@example.com'])
+        return render(request,'account/verify_otp.html')
+    return render(request,'account/forgot_password.html')
+
+def verify_otp(request):
+    if request.method=='POST':
+        email = request.session.get('email')
+        otp = request.session.get('otp')
+        entered_otp = request.POST['entered_otp']
+        user = User.objects.get(email=email)
+        print(type(otp))
+        print(type(entered_otp),entered_otp != otp)
+        if int(entered_otp) != int(otp):
+            messages.error(request,"Incorrect OTP")
+            return render(request,'account/verify_otp.html')
+        else:
+            context = {'entered_otp':entered_otp}
+            auth.login(request,user)
+            return render(request,'account/change_password.html',context)
+    return render(request,'account/verify_otp.html')
+
+
+def change_password(request):
+    if not request.POST.get('entered_otp') or not request.session.get('otp'):
+        return redirect('login')
+    email = request.session.get('email')
+    new_password = request.POST.get('new_password')
+    new_cpassword = request.POST.get('new_cpassword')
+    if new_password==new_cpassword:
+        user = User.objects.get(email=email)
+        user.set_password(new_password)
+        user.save()
+        messages.success(request,'Your Password Has Been Changed')
+        del request.session['otp']
+        del request.session['email']
+        return redirect('login')
+    else:
+        context = {'entered_otp':request.POST.get('entered_otp')}
+        messages.error(request,"Confirm Password Doesn't matched")
+        return render(request,'account/change_password.html',context)
+
+

@@ -13,40 +13,56 @@
                 </div>
                 <div class="body customScroll">
                     <ul class="minicart-product-list">
+                        {% for key,product in request.session.cart.items %}
                         <li>
-                            <a href="single-product.html" class="image"><img src="assets/images/product-image/1.webp" alt="Cart product Image"></a>
+                            <a href="single-product.html" class="image"><img src="{{product.image}}" alt="Cart product Image"></a>
                             <div class="content">
-                                <a href="single-product.html" class="title">Modern Smart Phone</a>
-                                <span class="quantity-price">1 x <span class="amount">$21.86</span></span>
+                                <a href="single-product.html" class="title">{{product.name | truncatewords:5}}</a>
+                                <span class="quantity-price">1 x <span class="amount">₹{{product.price}}</span></span>
                                 <a href="#" class="remove">×</a>
                             </div>
                         </li>
-                        <li>
-                            <a href="single-product.html" class="image"><img src="assets/images/product-image/2.webp" alt="Cart product Image"></a>
-                            <div class="content">
-                                <a href="single-product.html" class="title">Bluetooth Headphone</a>
-                                <span class="quantity-price">1 x <span class="amount">$13.28</span></span>
-                                <a href="#" class="remove">×</a>
-                            </div>
-                        </li>
-                        <li>
-                            <a href="single-product.html" class="image"><img src="assets/images/product-image/3.webp" alt="Cart product Image"></a>
-                            <div class="content">
-                                <a href="single-product.html" class="title">Smart Music Box</a>
-                                <span class="quantity-price">1 x <span class="amount">$17.34</span></span>
-                                <a href="#" class="remove">×</a>
-                            </div>
-                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
                 <div class="foot">
                     <div class="buttons">
-                        <a href="wishlist.html" class="btn btn-dark btn-hover-primary mt-30px">view wishlist</a>
+                        <a href="{% url 'wishlist' %}" class="btn btn-dark btn-hover-primary mt-30px">view wishlist</a>
                     </div>
                 </div>
             </div>
         </div>
         <!-- OffCanvas Wishlist End -->
+        <!-- OffCanvas Cart Start -->
+        <div id="offcanvas-cart" class="offcanvas offcanvas-cart">
+            <div class="inner">
+                <div class="head">
+                    <span class="title">Cart</span>
+                    <button class="offcanvas-close">×</button>
+                </div>
+                <div class="body customScroll">
+                    <ul class="minicart-product-list">
+                        {% for key,product in request.session.cart.items %}
+                        <li>
+                            <a href="{% url 'product_detail' product.slug %}" class="image"><img src="{{product.image}}" alt="Cart product Image"></a>
+                            <div class="content">
+                                <a href="{% url 'product_detail' product.slug %}" class="title">{{product.name | truncatewords:5}}</a>
+                                <span class="quantity-price">1 x <span class="amount">₹{{product.price}}</span></span>
+                                <a href="#" class="remove">×</a>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="foot">
+                    <div class="buttons mt-30px">
+                        <a href="{% url 'cart_detail' %}" class="btn btn-dark btn-hover-primary mb-30px">view cart</a>
+                        <a href="{% url 'checkout' %}" class="btn btn-outline-dark current-btn">checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- OffCanvas Cart End -->
         <!-- OffCanvas Cart Start -->
         <div id="offcanvas-cart" class="offcanvas offcanvas-cart">
             <div class="inner">

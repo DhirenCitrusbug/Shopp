@@ -10,6 +10,8 @@ class TagTublerInine(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
     inlines = [ImageTublerInine,TagTublerInine]
+    search_fields = "name",
+    
 class OrderItemTublerInine(admin.TabularInline):
     model = OrderItem
 
