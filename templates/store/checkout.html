@@ -44,9 +44,9 @@
                     <ul class="minicart-product-list">
                         {% for key,product in request.session.cart.items %}
                         <li>
-                            <a href="{% url 'product_detail' product.slug %}" class="image"><img src="{{product.image}}" alt="Cart product Image"></a>
+                            <a href="" class="image"><img src="{{product.image}}" alt="Cart product Image"></a>
                             <div class="content">
-                                <a href="{% url 'product_detail' product.slug %}" class="title">{{product.name | truncatewords:5}}</a>
+                                <a href="" class="title">{{product.name | truncatewords:5}}</a>
                                 <span class="quantity-price">1 x <span class="amount">₹{{product.price}}</span></span>
                                 <a href="#" class="remove">×</a>
                             </div>

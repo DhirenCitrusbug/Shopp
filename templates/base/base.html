@@ -75,7 +75,7 @@
                             <div class="search-element">
                                 <form action="{% url 'search' %}" method="post">
                                     {% csrf_token %}
-                                    <input type="text" name='search' placeholder="Search" value="{{request.user}}"/>
+                                    <input type="text" name='search' placeholder="Search" value=""/>
                                     <button type="submit"><i class="pe-7s-search"></i></button>
                                 </form>
                             </div>

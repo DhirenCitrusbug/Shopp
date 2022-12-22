@@ -19,7 +19,7 @@
                             <a href="single-product.html" class="image"><img src="{{wishlist.product.image.url}}" alt="Cart product Image"></a>
                             <div class="content">
                                 <a href="single-product.html" class="title">{{wishlist.product.name | truncatewords:4}}</a>
-                                <span class="quantity-price"><span class="amount">₹{{wishlist.product.price}}</span></span>
+                                <span class="quantity-price"><span class="amount">{{wishlist.product.price}}</span></span>
                                 <a href="" class="remove">×</a>
                             </div>
                         </li>
@@ -45,10 +45,10 @@
                     <ul class="minicart-product-list">
                         {% for key,product in request.session.cart.items %}
                         <li>
-                            <a href="{% url 'product_detail' product.slug %}" class="image"><img src="{{product.image}}" alt="Cart product Image"></a>
+                            <a href="" class="image"><img src="{{product.image}}" alt="Cart product Image"></a>
                             <div class="content">
-                                <a href="{% url 'product_detail' product.slug %}" class="title">{{product.name | truncatewords:5}}</a>
-                                <span class="quantity-price">1 x <span class="amount">₹{{product.price}}</span></span>
+                                <a href="" class="title">{{product.name | truncatewords:5}}</a>
+                                <span class="quantity-price">1 x <span class="amount">{{product.price}}</span></span>
                                 <a href="#" class="remove">×</a>
                             </div>
                         </li>
@@ -333,7 +333,7 @@
                                             </a>
                                         </h5>
                                         <span class="price">
-                                            <span class="new">₹ {{product.price}}</span>
+                                            <span class="new"> {{product.price}}</span>
                                         </span>
                                     </div>
                                     <div class="actions">

@@ -219,7 +219,7 @@
         </div>
         <!-- breadcrumb-area end -->
 
-        
+{% if request.session.wishlist_count > 0 %}   
 <div class="col-lg-9 order-lg-last col-md-12 order-md-first">
 <div class="shop-bottom-area">
                             <!-- Tab Content Area Start -->
@@ -584,7 +584,7 @@
                                             </div>
                                         </div>
 
-                                        {% if request.session.wishlist_count|length > 0 %}
+                                        
                                         <div class="tab-pane fade show active mb-n-30px " id="shop-list">
                                             {% for wishlist in wishlists %}
                                             <div class="shop-list-wrapper mb-30px">
@@ -632,6 +632,8 @@
                                             </div>
 
                                             {% endfor %}
+
+                                        </div>
                                             {% else %}
                                             <!-- Empty Cart area start -->
                 <div class="empty-cart-area pb-100px pt-100px">
@@ -652,8 +654,6 @@
                 </div>
                 <!-- Empty Cart area end -->
                 {% endif %}
-
-                                        </div>
                                         
                                     </div>
                                 </div>
