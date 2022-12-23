@@ -144,14 +144,50 @@ def fetch_resources(uri,rel):
     path = os.path.join(uri.replace(settings.STATIC_URL, ""))
     return path
 
+from django.contrib.staticfiles import finders
+
+
+def link_callback(uri, rel):
+        """
+        Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+        resources
+        """
+        result = finders.find(uri)
+        if result:
+                if not isinstance(result, (list, tuple)):
+                        result = [result]
+                result = list(os.path.realpath(path) for path in result)
+                path=result[0]
+        else:
+                sUrl = settings.STATIC_URL        # Typically /static/
+                sRoot = settings.STATIC_ROOT      # Typically /home/userX/project_static/
+                mUrl = settings.MEDIA_URL         # Typically /media/
+                mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project_static/media/
+
+                if uri.startswith(mUrl):
+                        path = os.path.join(mRoot, uri.replace(mUrl, ""))
+                elif uri.startswith(sUrl):
+                        path = os.path.join(sRoot, uri.replace(sUrl, ""))
+                else:
+                        return uri
+
+        # make sure that file exists
+        if not os.path.isfile(path):
+                raise Exception(
+                        'media URI must start with %s or %s' % (sUrl, mUrl)
+                )
+        return path
+
 def render_to_pdf(template_src, context_dict={}):
     template = get_template(template_src)
     html = template.render(context_dict)
     result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")),result)
+    # response = HttpResponse(content_type='application/pdf')
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)#, link_callback=fetch_resources)
     if not pdf.err:
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
+
 
 @login_required(login_url='/login')
 def success(request):
@@ -170,10 +206,21 @@ def success(request):
         'order_id':order_id,
         'payment_id':razorpay_payment_id,
         'order':order,
+        'total_amount':int(order.amount)/100,
     }
     pdf = render_to_pdf('payment/invoice.html',data)
-    return render(request,'store/thank_you.html')
-
+    print(pdf,'dfsdd')
+    if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "Invoice_%s.pdf" %(data['order_id'])
+            content = "inline; filename='%s'" %(filename)
+            #download = request.GET.get("download")
+            #if download:
+            content = "attachment; filename=%s" %(filename)
+            response['Content-Disposition'] = content
+            return response
+    return HttpResponse("Not found")
+    # return HttpResponse(pdf,content_type='application/pdf')
 @login_required(login_url='/login')
 def order_detail(request,pk):
     order_item = OrderItem.objects.get(pk=pk)

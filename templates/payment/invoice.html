@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zxx" dir="ltr">
 {% load static %}
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
   <title>Invoice</title>
 <style>
   .clearfix:after {
@@ -150,8 +153,8 @@ footer {
     <div id="logo" style="display:flex; justify-content:center; align-items:center;">
       {#<img src="static/firstapp/images/logo.png" class="brand-logo" width=60 height=60>#} <!--not working-->
       {#<img src="static/logo.png" class="brand-logo" height="200px">#} <!--not working-->
-      <img src="D:\Mastering Django\firstproject\firstapp\logo.png" class="brand-logo" width=60 height=60>
-      <h1 class="brand-name">WonderShop</h1>
+      <img src="" class="brand-logo" width=60 height=60>
+      <h1 class="brand-name">Shop</h1>
     </div>
     <h1>INVOICE</h1>
     <div id="company" class="clearfix">
@@ -160,7 +163,7 @@ footer {
       <div><a href="www.wondershop.in:8000">www.wondershop.in:8000</a></div>
     </div>
     <div id="project">
-      <div><span>CLIENT:</span> {{order.user.username}}</div>
+      <div><span>CLIENT:</span> {{order.user.first_name}} {{order.user.last_name}}</div>
       <div><span>EMAIL:</span> <a href="mailto:{{user_email}}">{{order.user.email}}</a></div>
       <div><span>DATE:</span> {{order.date}}</div>
       <div><span>INVOICE ID:</span> {{order_id}}</div>
@@ -179,7 +182,7 @@ footer {
               </tr>
           </thead>
           <tbody>
-              {% for order_item in order.order_items.all %}
+               {% for order_item in order.order_items.all%}
               <tr>
                   <td scope="row">{{order_item.product}}</td>
                   <td>{{order_item.quantity}}</td>
@@ -190,7 +193,7 @@ footer {
               <tr>
                   <td scope="row"></td>
                   <td>TOTAL: </td>
-                  <td>{{order.amount}}</td>
+                  <td>{{total_amount}}</td>
                   
               </tr>
           </tbody>
